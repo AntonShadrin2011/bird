@@ -1,5 +1,4 @@
 import arcade
-import os
 import random
 
 SCREEN_WIDTH = 800
@@ -24,18 +23,18 @@ class Bird(arcade.Sprite):
         else:
             self.angle = 0
 
-
 class Truba(arcade.Sprite):
     def __init__(self):
         super().__init__('pipe.png', scale=0.3)
         self.change_x = 7
         self.center_y = random.randint(100, 600)
+        self.is_passed = False
+
     def update(self):
         self.center_x -= self.change_x
         if self.center_x < 3:
             self.center_x = 1350
-            self.zapret = False
-            self.center_y = random.randint(100, 600)
+            self.is_passed = False
 
 class MyGame(arcade.Window):
     def __init__(self, width, height, title):
@@ -51,13 +50,12 @@ class MyGame(arcade.Window):
         for i in range(4):
             truba = Truba()
             truba.center_x = 230 * i
-            truba.center_y = 177
+            truba.center_y = random.randint(100, 600)
             self.truby.append(truba)
 
     def on_draw(self):
         self.clear()
-        arcade.draw_texture_rectangle(self.width // 2, self.height // 2, self.width, height=self.height,
-                                      texture=self.background)
+        arcade.draw_texture_rectangle(self.width // 2, self.height // 2, self.width, height=self.height, texture=self.background)
         self.bird.draw()
         self.truby.draw()
         arcade.draw_text(f'Очки: {self.score}', 10, 780, arcade.color.WHITE, 18)
@@ -65,23 +63,15 @@ class MyGame(arcade.Window):
     def update(self, delta_time):
         self.bird.logika()
         self.truby.update()
-
+        for pipe in self.truby:
+            if not pipe.is_passed and pipe.center_x < self.bird.center_x:
+                pipe.is_passed = True
+                self.score += 1
 
     def on_key_press(self, key, mods):
         if key == arcade.key.SPACE:
             self.bird.change_y = 15
 
-
 game = MyGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
 game.setup()
 arcade.run()
-
-"""
-1. Сделать спавн труб по игреку случайный
-2. Подумать и попытаться реализовать верхние трубы
-3. Убрать фон у картинок (труб)
-4. Добавить звуки
-5. Сделать подсчёт очков
-6. Задание *: сделать проигрыш, что если мы столкнулись с трубами - отрисовать картинку (game over), нужно только найти её
-
-"""

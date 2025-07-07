@@ -1,5 +1,6 @@
 import arcade
 import os
+import random
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
@@ -28,11 +29,13 @@ class Truba(arcade.Sprite):
     def __init__(self):
         super().__init__('pipe.png', scale=0.3)
         self.change_x = 7
+        self.center_y = random.randint(100, 600)
     def update(self):
         self.center_x -= self.change_x
         if self.center_x < 3:
             self.center_x = 1350
             self.zapret = False
+            self.center_y = random.randint(100, 600)
 
 class MyGame(arcade.Window):
     def __init__(self, width, height, title):

@@ -5,6 +5,7 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
 SCREEN_TITLE = 'Bird'
 
+
 class Bird(arcade.Sprite):
     def __init__(self):
         super().__init__('bird.png', scale=1)
@@ -23,8 +24,9 @@ class Bird(arcade.Sprite):
         else:
             self.angle = 0
 
+
 class Truba(arcade.Sprite):
-    def __init__(self,vverx):
+    def __init__(self, vverx):
         super().__init__('pipe.png', scale=0.3, flipped_vertically=vverx)
 
         self.change_x = 7
@@ -35,6 +37,7 @@ class Truba(arcade.Sprite):
         if self.right < 0:
             self.left = 800
             self.is_passed = False
+
 
 class MyGame(arcade.Window):
     def __init__(self, width, height, title):
@@ -49,21 +52,22 @@ class MyGame(arcade.Window):
         self.bird.center_x = 237
         for i in range(4):
             truba = Truba(False)
-            truba.center_x = 230 * i
+            truba.center_x = SCREEN_WIDTH + 230 * i
             truba.center_y = random.randint(50, 200)
             self.truby.append(truba)
 
             trubaTop = Truba(True)
-            trubaTop.center_x = 230 * i
+            trubaTop.center_x = SCREEN_WIDTH + 230 * i
             trubaTop.center_y = random.randint(730, 880)
             self.truby.append(trubaTop)
 
     def on_draw(self):
         self.clear()
-        arcade.draw_texture_rectangle(self.width // 2, self.height // 2, self.width, height=self.height, texture=self.background)
+        arcade.draw_texture_rectangle(self.width // 2, self.height // 2, self.width, height=self.height,
+                                      texture=self.background)
         self.bird.draw()
         self.truby.draw()
-        arcade.draw_text(f'Очки: {self.score}', 10, 780, arcade.color.WHITE, 18)
+        arcade.draw_text(f'Очки:  {int(self.score)}', 10, 780, arcade.color.WHITE, 18)
 
     def update(self, delta_time):
         self.bird.logika()
@@ -71,13 +75,15 @@ class MyGame(arcade.Window):
         for pipe in self.truby:
             if not pipe.is_passed and pipe.center_x < self.bird.center_x:
                 pipe.is_passed = True
-                self.score += 1
+                self.score += 1 / 2
         collision = arcade.check_for_collision_with_list(self.bird, self.truby)
-        print(collision)
+        if len(collision) > 0:
+            self.close()
 
     def on_key_press(self, key, mods):
         if key == arcade.key.SPACE:
             self.bird.change_y = 15
+
 
 game = MyGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
 game.setup()
